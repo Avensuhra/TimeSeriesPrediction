@@ -1,2 +1,0 @@
-import pysgpp
-dir(pysgpp)

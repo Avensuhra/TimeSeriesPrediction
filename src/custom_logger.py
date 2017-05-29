@@ -5,7 +5,9 @@ from datetime import datetime
 # application imports
 
 def init():
-    logging.basicConfig(filename="../log/tsp.log", format="%(levelname)s(%(message)s", level=logging.DEBUG)
+    filename = "../TimeSeriesPrediction/log/tsp.log"
+    open(filename, 'w').close()
+    logging.basicConfig(filename=filename, format="%(levelname)s(%(message)s", level=logging.DEBUG)
 
 
 def info(source, text):

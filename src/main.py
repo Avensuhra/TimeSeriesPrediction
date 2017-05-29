@@ -7,10 +7,17 @@ from grid_pipeline import GridPipeline
 import custom_logger as Log
 
 
-if __name__ == "__main__":
-    Log.init()
+def tutorial_test():
     pipeline = GridPipeline()
     pipeline.create_regular_sparsegrid(2, 3)
-    function = lambda x0, x1: 16.0 * (x0 - 1.0) * x0 * (x1 - 1.0) *x1
+    function = lambda x0, x1: 16.0 * (x0 - 1.0) * x0 * (x1 - 1.0) * x1
     pipeline.train_grid_with_function(function)
     pipeline.evaluate_grid_at_vector([0.52, 0.73])
+
+def henon_map_test():
+    pass
+
+if __name__ == "__main__":
+    Log.init()
+    tutorial_test()
+

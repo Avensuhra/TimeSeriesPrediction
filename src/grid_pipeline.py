@@ -6,9 +6,8 @@ class GridPipeline(object):
         self.grid = None
         self.gridStorage = None
         self.alphas = None
-        self.dataset = None
+        self.ground_truth = None
         self.function = None
-        self.use_function = False
         self.number_of_datapoints = 0
         self.number_of_trainingpoints = 0
         self.dimension = 0
@@ -39,13 +38,16 @@ class GridPipeline(object):
     def train_grid_with_dataset(self, dataset):
         pass
 
-    # Will evaluate the array at all remaining points that were not used for training
+    # Will evaluate the array at all remaining points that were not used for training, only works for dim = 2 atm
     def evaluate_grid_at_vector(self, vector):
         points = pysgpp.DataVector(self.dimension)
         for i in xrange(self.dimension):
             points[i] = vector[i]
         evaluation = pysgpp.createOperationEval(self.grid)
-        Log.info(self.__class__.__name__, "Function evaluation at {0} = {1}".format(vector, evaluation.eval(self.alphas, points)))
+        Log.info(self.__class__.__name__, "Function interpolation value at {0} = {1}".format(vector, evaluation.eval(self.alphas, points)))
+        if(self.use_function):
+            Log.info(self.__class__.__name__, "Ground truth value at {0} = {1}".format(vector, self.function(vector[0], vector[1])))
+
 
     def evaluate_grid_by_dataset(self):
         pass

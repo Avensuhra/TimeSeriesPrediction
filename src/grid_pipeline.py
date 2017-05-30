@@ -1,6 +1,17 @@
 import pysgpp
 import custom_logger as Log
 
+"""
+@Author:    Ingo Mayer
+Date:       29.05.2017
+
+Description: Obsolete.
+
+             Sparse grid functionality separated into different callable functions based on the
+             pysgpp tutorial. Was intended as basis for future implementations, however this will not
+             be possible.
+"""
+
 class GridPipeline(object):
     def __init__(self):
         self.grid = None

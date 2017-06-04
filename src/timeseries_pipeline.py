@@ -23,10 +23,10 @@ class TimeSeriesPipeline(object):
 
     # ToDo: experiment with grid types & adaptivity; for now use linear, regular grid
     def create_grid(self, dimension, level):
-        self.dimension = dimension
-        self.grid = pysgpp.Grid.createLinearGrid(dimension)
+        self._dimension = dimension
+        self._grid = pysgpp.Grid.createLinearGrid(dimension)
         # create a regular sparse grid of specified level
-        self.grid.getGenerator().regular(level)
+        self._grid.getGenerator().regular(level)
         Log.info(self.__class__.__name__, "Created linear grid with dimension " + str(dimension)
                  + " and level " + str(level))
 
@@ -36,7 +36,7 @@ class TimeSeriesPipeline(object):
         pass
 
     def add_training_data(self, timeseries):
-        self.training_data = PreProcessing().transform_timeseries_to_datamatrix(timeseries, self.dimension)
+        self._training_data = PreProcessing().transform_timeseries_to_datamatrix(timeseries, self._dimension)
 
     def create_linear_system(self):
         pass

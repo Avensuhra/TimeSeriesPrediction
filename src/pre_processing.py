@@ -30,5 +30,5 @@ class PreProcessing(object):
                 matrix.set(i, j, timeseries[i + j])
 
         Log.info(self.__class__.__name__, "Created data matrix grid with dimension " + str(dimension)
-                         + " and number of rows " + str(len(timeseries)))
+                 + " and number of rows " + str(len(timeseries)))
         return matrix

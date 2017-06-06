@@ -3,6 +3,7 @@
 import pysgpp
 import tutorial
 from grid_pipeline import GridPipeline
+from timeseries_pipeline import TimeSeriesPipeline
 # application imports
 import custom_logger as Log
 from test_definitions import HenonTest
@@ -20,5 +21,6 @@ def henon_map_test():
 
 if __name__ == "__main__":
     Log.init()
+    TimeSeriesPipeline().learner_builder_test()
     #tutorial_test()
-    henon_map_test()
+    #henon_map_test()

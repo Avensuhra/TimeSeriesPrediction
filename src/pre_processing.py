@@ -1,8 +1,8 @@
 # standard imports
+import logging as Log
 # third party imports
-import pysgpp
+import numpy
 # application imports
-import custom_logger as Log
 
 """
 @Author:    Ingo Mayer
@@ -21,14 +21,33 @@ class PreProcessing(object):
         pass
 
     # Expects a 1-dimensional numpy array with the earliest value at index 0
-    def transform_timeseries_to_datamatrix(self, timeseries, dimension):
+    def transform_timeseries_to_datatuple(self, timeseries, dimension):
         # starts at earliest timestep, each row goes 1 step forward in time
-        matrix = pysgpp.DataMatrix(len(timeseries) - 1, dimension)
-        for i in xrange(0, matrix.getNrows()):
-            for j in xrange(0, dimension):
+        rescaled_series = self.scale_to_correct_interval(timeseries)
+        length = len(timeseries) - dimension
+        sample_array = numpy.ndarray(shape=(length, dimension))
+        Log.debug("Created sample_array with shape " + str(sample_array.shape))
+        for i in xrange(length):
+            for j in xrange(dimension):
                 # each "dimension" goes 1 step forward in time
-                matrix.set(i, j, timeseries[i + j])
+                sample_array[i][j] = rescaled_series[i + j]
+        value_array = rescaled_series[dimension:]
+        Log.debug("Created values_array with length " + str((len(value_array))))
 
-        Log.info(self.__class__.__name__, "Created data matrix grid with dimension " + str(dimension)
-                 + " and number of rows " + str(len(timeseries)))
-        return matrix
+        return (sample_array, value_array)
+
+    def scale_to_correct_interval(self, timeseries):
+        max_value = numpy.amax(timeseries)
+        min_value = numpy.amin(timeseries)
+        padding = (max_value - min_value)/4
+        Log.debug("Min = {0}| Max = {1}| Padding = {2}".format(min_value, max_value, padding))
+        max_value += padding
+        min_value -= padding
+        # rescale
+        old_range = max_value - min_value
+        new_range = 1 #(1 - 0)
+        rescaled_series = []
+        for value in timeseries:
+            new_value = (((value - min_value)*new_range)/old_range)
+            rescaled_series.append(new_value)
+        return rescaled_series

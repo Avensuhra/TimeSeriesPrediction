@@ -1,19 +1,17 @@
 # standard imports
-import random
 import numpy as np
 # third party imports
 import matplotlib.pyplot as plt
 import pysgpp
 # application imports
-import custom_logger as Log
+import logging as Log
 from pre_processing import PreProcessing
 from file_parser import FileParser
 from pysgpp.extensions.datadriven.learner import LearnerBuilder
-from pysgpp.extensions.datadriven.controller.InfoToFile import InfoToScreen, InfoToFile
-from pysgpp.extensions.datadriven.data.ARFFAdapter import ARFFAdapter
+from pysgpp.extensions.datadriven.controller.InfoToFile import InfoToScreen
+from pysgpp.extensions.datadriven.learner import SolverTypes
 from pysgpp import DataVector
-from pysgpp.extensions.datadriven.uq.plot.plot1d import plotSG1d
-from pysgpp.extensions.datadriven.uq.plot.plot2d import plotSG2d
+from timeseries_learner import TimeseriesLearner
 
 """
 @Author:    Ingo Mayer
@@ -33,80 +31,86 @@ def f(x):
 # ToDo: Check out LearnerBuilder - possibly the steps done so far are included in that already
 
 class TimeSeriesPipeline(object):
+    def __init__(self):
+        self._learner = None
+        self._testing_data = None
 
     # ToDo: experiment with grid types & adaptivity; for now use linear, regular grid
-    def create_grid(self, dimension, level):
-        self._dimension = dimension
-        self._grid = pysgpp.Grid.createLinearGrid(dimension)
-        # create a regular sparse grid of specified level
-        self._grid.getGenerator().regular(level)
-        Log.info(self.__class__.__name__, "Created linear grid with dimension " + str(dimension)
-                 + " and level " + str(level))
+    def create_learner_with_file(self, level, lambda_parameter, file_name):
+        training_data = FileParser().arff_to_numpy(file_name)
+        self._create_learner(level, PreProcessing().scale_to_correct_interval(training_data[0]),
+                             PreProcessing().scale_to_correct_interval(training_data[1]), lambda_parameter)
 
-    def load_training_data(self, file):
-        # ToDo: read csv file
-        # ToDo: call preprocessing to transform data into the necessary n-dimensional construct
-        pass
+    def create_learner_with_array(self, level, lambda_parameter, data):
+        self._create_learner(level, PreProcessing().scale_to_correct_interval(data[0]),
+                             PreProcessing().scale_to_correct_interval(data[1]), lambda_parameter)
 
-    def add_training_data(self, timeseries):
-        self._training_data = PreProcessing().transform_timeseries_to_datamatrix(timeseries, self._dimension)
+    def create_learner_with_reshaped_data(self, level, lambda_parameter, data):
+        Log.debug("Creating regression with lambda " + str(lambda_parameter) + " and level " + str(level))
+        self._create_learner(level, data[0], data[1], lambda_parameter)
 
-    def create_linear_system(self):
-        pass
-        # ToDo: Calulate formula 17 of time series paper and stuff into matrix
+    def _create_learner(self, level, scaled_samples, scaled_values, lambda_parameter):
+        self._learner = TimeseriesLearner()
+        self._learner.set_training_data(scaled_samples, scaled_values)
+        self._learner.set_grid(level)
+        self._learner.set_specification(lambda_parameter)
+        self._learner.set_stop_policy()
+        self._learner.set_solver(SolverTypes.CG)
+        self._learner.get_result()
 
+    def set_testing_data_with_file(self, file_name):
+        if self._learner is not None:
+            data = FileParser().arff_to_numpy(file_name)
+            self._set_testing_data(PreProcessing().scale_to_correct_interval(data[0]),
+                                   PreProcessing().scale_to_correct_interval(data[1]))
+        else:
+            Log.error("Need to set learner before specifying testing data.")
+
+    def set_testing_data_with_array(self, data):
+        if self._learner is not None:
+            self._set_testing_data(PreProcessing().scale_to_correct_interval(data[0]),
+                                   PreProcessing().scale_to_correct_interval(data[1]))
+        else:
+            Log.error("Need to set learner before specifying testing data.")
+
+    def _set_testing_data(self, samples, values):
+        self._testing_data = []
+        self._testing_data.append(samples)
+        self._testing_data.append(values)
 
     # ToDo: Possibly move this to a separate solver class
     def precondition_solver(self):
         pass
 
-    # This will return the alphas
-    def solve_linear_system(self):
-        pass
-
-    def predict_next_value(self):
-        pass
-
-    def predict_next_n_values(self, n):
-        pass
+    def test_regression(self, n):
+        if self._learner is not None and self._testing_data is not None:
+            pass
+        else:
+            Log.error("Need to set learner before specifying testing data.")
 
     # ToDo: Move this to a separate post-proecessing or evaluation class
     def compare_prediction(self, ground_truth):
         pass
 
-    def learner_builder_test(self):
-
-        """
-        file_content = FileParser().arff_to_numpy("../TimeSeriesPrediction/datasets/bank_rejections/bank8FM_train.arff")
-        samples = file_content[0]
-        values = file_content[1]
-        """
-        numSamples = 100
-        numDims = 2
-        samples = np.random.rand(numSamples, numDims)
-        values = f(samples)
+    def get_training_error(self, training_data):
+        truth_vector = training_data[1]
+        sample_array = training_data[0]
+        prediction_vector = []
+        print("-----------------------------------------------")
+        for i in xrange(len(sample_array)):
+            prediction_vector.append(self._learner.predict_next_value(sample_array[i]))
+        print(self.calculate_mean_error(prediction_vector, truth_vector))
 
 
-        print(len(samples), len(values))
-        print(samples[0].shape)
-        print(values)
-        print(samples)
+    def get_test_error(self):
+        pass
 
-        builder = LearnerBuilder()
-        learner = builder.buildRegressor() \
-                            .withTrainingDataFromARFFFile("../TimeSeriesPrediction/datasets/bank_rejections/bank8FM_train.arff") \
-                            .withTestingDataFromARFFFile("../TimeSeriesPrediction/datasets/bank_rejections/bank8FM_test.arff") \
-                            .withGrid().withLevel(2)\
-                            .withSpecification().withLambda(pow(2, -17)) \
-                            .withStopPolicy()\
-                            .withCGSolver()\
-                            .withProgressPresenter(InfoToScreen())\
-                            .andGetResult()
+    def calculate_mean_error(self, prediction_vector, actual_vector):
+        sum = 0
+        for i in range(len(prediction_vector)):
+            sum += (prediction_vector[i] - actual_vector[i])**2
 
-        # .withTrainingDataFromNumPyArray(samples, values)\
+        return np.sqrt(sum/len(prediction_vector))
 
-        gs = learner.grid.getStorage()
-        print "Dimensions: %i" % gs.getDimension()
-        print "Grid points: %i" % gs.getSize()
-        learner.learnData()
+
 

@@ -4,7 +4,7 @@ import gzip
 # third party imports
 import numpy
 # application imports
-import custom_logger as Log
+import logging as Log
 
 class FileParser(object):
 
@@ -53,6 +53,7 @@ class FileParser(object):
             for j in xrange(len(class_values)):
                 tmp_array[j][i] = data[i][j]
 
+        Log.debug("Created matrix with shape: " + str(tmp_array.shape))
         # cleaning up and return
         fin.close()
         return(tmp_array, class_values)

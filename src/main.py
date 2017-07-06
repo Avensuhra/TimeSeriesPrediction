@@ -1,26 +1,23 @@
 # system imports
+import os
 # third party imports
-import pysgpp
-import tutorial
-from grid_pipeline import GridPipeline
-from timeseries_pipeline import TimeSeriesPipeline
 # application imports
-import custom_logger as Log
+import logging as Log
+from timeseries_pipeline import TimeSeriesPipeline
 from test_definitions import HenonTest
 
 
-def tutorial_test():
-    pipeline = GridPipeline()
-    pipeline.create_regular_sparsegrid(2, 3)
-    function = lambda x0, x1: 16.0 * (x0 - 1.0) * x0 * (x1 - 1.0) * x1
-    pipeline.train_grid_with_function(function)
-    pipeline.evaluate_grid_at_vector([0.52, 0.73])
-
+# outdated
 def henon_map_test():
-    HenonTest(level=3, total_length=20000, training_length=50, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
+    HenonTest(level=6, total_length=20000, training_length=500, a=1.4, b=0.3, x_0=0.1, x_1=0.2, lambda_parameter=pow(2, -25))
 
 if __name__ == "__main__":
-    Log.init()
-    TimeSeriesPipeline().learner_builder_test()
-    #tutorial_test()
-    #henon_map_test()
+    try:
+        os.remove("./log/tsp.log")
+    except:
+        None
+    format = "[%(filename)s:%(lineno)s - %(funcName)s() ]\t\t%(message)s"
+    Log.basicConfig(filename="./log/tsp.log", format=format, level=Log.DEBUG)
+    #train_file = "../TimeSeriesPrediction/datasets/bank_rejections/bank8FM_train.arff"
+    #TimeSeriesPipeline().create_learner_with_file(3, pow(2, -17), train_file)
+    henon_map_test()

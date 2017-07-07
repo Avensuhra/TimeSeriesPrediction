@@ -6,10 +6,8 @@ import logging as Log
 from timeseries_pipeline import TimeSeriesPipeline
 from test_definitions import HenonTest
 
-
-# outdated
 def henon_map_test():
-    HenonTest(level=6, total_length=20000, training_length=500, a=1.4, b=0.3, x_0=0.1, x_1=0.2, lambda_parameter=pow(2, -25))
+    HenonTest(level=7, total_length=20000, training_length=5000, a=1.4, b=0.3, x_0=0.1, x_1=0.2, lambda_parameter=pow(2, -22))
 
 if __name__ == "__main__":
     try:

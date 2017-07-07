@@ -20,10 +20,31 @@ Description: Defines tests for non-csv file based tests like the Henon map, wher
 class HenonTest(object):
     _timeseries = None
     _pipeline = None
+    _training_data = None
 
     def __init__(self, level, total_length, training_length, lambda_parameter, a, b, x_0, x_1):
+        print("Testing Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))
+        print("Lambda: " + str(lambda_parameter))
+        print("Grid level: " + str(level))
+        print("Total datapoints: " + str(total_length))
+        print("Training datapoints: " + str(training_length))
+        print("------------------------------------------------------------")
         self._timeseries = self._calculate_timeseries(total_length, a, b, x_0, x_1)
+        print("Calculated Henon map values")
+        print("------------------------------------------------------------")
+        print("Starting training")
         self._create_pipeline(2, level, self._timeseries[:(training_length + 2)], lambda_parameter)
+        print("Finished training")
+        print("------------------------------------------------------------")
+        print("Starting evaluation of training data")
+        print("Testing " + str(len(self._training_data[0])) + " values.")
+        print("RMSE Train = " + str(self._pipeline.get_training_error(self._training_data)))
+        print("------------------------------------------------------------")
+        print("Starting evaluation of testing data")
+        test_data = PreProcessing().transform_timeseries_to_datatuple(self._timeseries[(training_length - 2):], 2)
+        print("Testing " + str(len(test_data[0])) + " values.")
+        print("RMSE Test = " + str(self._pipeline.get_training_error(test_data)))
+
 
     def _calculate_timeseries(self, length, a, b, x_0, x_1):
         values = []
@@ -34,12 +55,9 @@ class HenonTest(object):
         return values
 
     def _create_pipeline(self, dimension, level, training_series, lambda_parameter):
-        training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
+        self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
         self._pipeline = TimeSeriesPipeline()
-        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, training_data)
-        self._pipeline.get_training_error(training_data)
-
-
+        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)
 
 
 

@@ -96,14 +96,9 @@ class TimeSeriesPipeline(object):
         truth_vector = training_data[1]
         sample_array = training_data[0]
         prediction_vector = []
-        print("-----------------------------------------------")
         for i in xrange(len(sample_array)):
             prediction_vector.append(self._learner.predict_next_value(sample_array[i]))
-        print(self.calculate_mean_error(prediction_vector, truth_vector))
-
-
-    def get_test_error(self):
-        pass
+        return self.calculate_mean_error(prediction_vector, truth_vector)
 
     def calculate_mean_error(self, prediction_vector, actual_vector):
         sum = 0

@@ -1,0 +1,47 @@
+Testing Henon map with parameters: 
+a = 1.4
+b = 0.3
+Lambda: 7.62939453125e-06
+Grid level: 3
+Total datapoints: 20000
+Training datapoints: 50
+------------------------------------------------------------
+Calculated Henon map values
+------------------------------------------------------------
+Starting training
+Dimension is: 2
+Number of data entries is: 50
+Adaptive Step:  0
+Solving started
+Starting norm of residuum: 387.851
+delta: 9.30474
+delta: 0.946349
+delta: 0.0362074
+delta: 0.0116096
+delta: 0.00450848
+delta: 0.000898121
+delta: 0.000742571
+delta: 0.000554119
+delta: 0.000610445
+delta: 0.000175943
+delta: 0.00178541
+delta: 5.45616e-05
+delta: 2.45844e-05
+delta: 0.000114294
+delta: 1.96702e-05
+delta: 5.43257e-07
+Solving Complete
+Number of iterations: 16
+Final norm of residuum: 5.43257e-07
+Number of points:  17
+Correct classified on training data:  1.72795861389e-05
+Learning complete
+Finished training
+------------------------------------------------------------
+Starting evaluation of training data
+Testing 50 values.
+RMSE Train = 0.00415687215811
+------------------------------------------------------------
+Starting evaluation of testing data
+Testing 19950 values.
+RMSE Test = 0.0122898360761

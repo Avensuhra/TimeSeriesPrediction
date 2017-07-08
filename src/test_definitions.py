@@ -10,7 +10,7 @@ from pre_processing import PreProcessing
 @Author:    Ingo Mayer
 Created:    04.06.2017
 
-Changed:    04.06.2017
+Changed:    07.07.2017
 
 Description: Defines tests for non-csv file based tests like the Henon map, where the time series
              is calculated from a function.
@@ -29,7 +29,7 @@ class HenonTest(object):
         print("Total datapoints: " + str(total_length))
         print("Training datapoints: " + str(training_length))
         print("------------------------------------------------------------")
-        self._timeseries = self._calculate_timeseries(total_length, a, b, x_0, x_1)
+        self._timeseries = self.calculate_timeseries(total_length, a, b, x_0, x_1)
         print("Calculated Henon map values")
         print("------------------------------------------------------------")
         print("Starting training")
@@ -46,7 +46,7 @@ class HenonTest(object):
         print("RMSE Test = " + str(self._pipeline.get_training_error(test_data)))
 
 
-    def _calculate_timeseries(self, length, a, b, x_0, x_1):
+    def calculate_timeseries(self, length, a, b, x_0, x_1):
         values = []
         values.append(x_0)
         values.append(x_1)
@@ -61,3 +61,13 @@ class HenonTest(object):
 
 
 
+class JumpMapTest(object):
+    pass
+
+
+class ForecastingCompetitionTest(object):
+    pass
+
+
+class FinancialDataTest(object):
+    pass

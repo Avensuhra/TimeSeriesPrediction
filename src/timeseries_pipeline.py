@@ -17,7 +17,7 @@ from timeseries_learner import TimeseriesLearner
 @Author:    Ingo Mayer
 Created:    30.05.2017
 
-Changed:    04.06.2017
+Changed:    07.07.2017
 
 Description: Provides functions for the main steps in creating a time series prediction
              sparse grid.
@@ -103,7 +103,7 @@ class TimeSeriesPipeline(object):
     def calculate_mean_error(self, prediction_vector, actual_vector):
         sum = 0
         for i in range(len(prediction_vector)):
-            sum += (prediction_vector[i] - actual_vector[i])**2
+            sum += pow((prediction_vector[i] - actual_vector[i]), 2)
 
         return np.sqrt(sum/len(prediction_vector))
 

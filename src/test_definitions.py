@@ -22,7 +22,7 @@ class HenonTest(object):
     _pipeline = None
     _training_data = None
 
-    def __init__(self, level, total_length, training_length, lambda_parameter, a, b, x_0, x_1):
+    def __init__(self, level, total_length, training_length, lambda_parameter, training_accuracy, a, b, x_0, x_1):
         print("Testing Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))
         print("Lambda: " + str(lambda_parameter))
         print("Grid level: " + str(level))
@@ -33,7 +33,7 @@ class HenonTest(object):
         print("Calculated Henon map values")
         print("------------------------------------------------------------")
         print("Starting training")
-        self._create_pipeline(2, level, self._timeseries[:(training_length + 2)], lambda_parameter)
+        self._create_pipeline(2, level, self._timeseries[:(training_length + 2)], lambda_parameter, training_accuracy)
         print("Finished training")
         print("------------------------------------------------------------")
         print("Starting evaluation of training data")
@@ -54,9 +54,9 @@ class HenonTest(object):
             values.append(a - pow(values[i - 1], 2) + b*values[i - 2])
         return values
 
-    def _create_pipeline(self, dimension, level, training_series, lambda_parameter):
+    def _create_pipeline(self, dimension, level, training_series, lambda_parameter, training_accuracy):
         self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
-        self._pipeline = TimeSeriesPipeline()
+        self._pipeline = TimeSeriesPipeline(training_accuracy)
         self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)
 
 

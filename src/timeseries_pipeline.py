@@ -25,25 +25,11 @@ Description: Provides functions for the main steps in creating a time series pre
 """
 
 
-def f(x):
-    return np.prod(4. * x * (1 - x), axis=1)
-
-# ToDo: Check out LearnerBuilder - possibly the steps done so far are included in that already
-
 class TimeSeriesPipeline(object):
-    def __init__(self):
+    def __init__(self, training_accuracy):
         self._learner = None
         self._testing_data = None
-
-    # ToDo: experiment with grid types & adaptivity; for now use linear, regular grid
-    def create_learner_with_file(self, level, lambda_parameter, file_name):
-        training_data = FileParser().arff_to_numpy(file_name)
-        self._create_learner(level, PreProcessing().scale_to_correct_interval(training_data[0]),
-                             PreProcessing().scale_to_correct_interval(training_data[1]), lambda_parameter)
-
-    def create_learner_with_array(self, level, lambda_parameter, data):
-        self._create_learner(level, PreProcessing().scale_to_correct_interval(data[0]),
-                             PreProcessing().scale_to_correct_interval(data[1]), lambda_parameter)
+        self._accuracy = training_accuracy
 
     def create_learner_with_reshaped_data(self, level, lambda_parameter, data):
         Log.debug("Creating regression with lambda " + str(lambda_parameter) + " and level " + str(level))
@@ -55,7 +41,7 @@ class TimeSeriesPipeline(object):
         self._learner.set_grid(level)
         self._learner.set_specification(lambda_parameter)
         self._learner.set_stop_policy()
-        self._learner.set_solver(SolverTypes.CG)
+        self._learner.set_solver(SolverTypes.CG, self._accuracy)
         self._learner.get_result()
 
     def set_testing_data_with_file(self, file_name):
@@ -80,16 +66,6 @@ class TimeSeriesPipeline(object):
 
     # ToDo: Possibly move this to a separate solver class
     def precondition_solver(self):
-        pass
-
-    def test_regression(self, n):
-        if self._learner is not None and self._testing_data is not None:
-            pass
-        else:
-            Log.error("Need to set learner before specifying testing data.")
-
-    # ToDo: Move this to a separate post-proecessing or evaluation class
-    def compare_prediction(self, ground_truth):
         pass
 
     def get_training_error(self, training_data):

@@ -1,16 +1,11 @@
 # standard imports
 import numpy as np
 # third party imports
-import matplotlib.pyplot as plt
-import pysgpp
 # application imports
 import logging as Log
 from pre_processing import PreProcessing
 from file_parser import FileParser
-from pysgpp.extensions.datadriven.learner import LearnerBuilder
-from pysgpp.extensions.datadriven.controller.InfoToFile import InfoToScreen
 from pysgpp.extensions.datadriven.learner import SolverTypes
-from pysgpp import DataVector
 from timeseries_learner import TimeseriesLearner
 
 """

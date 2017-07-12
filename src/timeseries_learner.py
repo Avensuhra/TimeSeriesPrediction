@@ -1,16 +1,10 @@
 # standard imports
 import logging as Log
-import numpy as np
 # third party imports
 import pysgpp
-from pysgpp.extensions.datadriven.learner import LearnerBuilder, Learner, TrainingStopPolicy, TrainingSpecification, SolverTypes
-from pysgpp import DataVector, Grid, ConjugateGradients, DataMatrix
-from pysgpp.extensions.datadriven.controller import LearnerEventController
+from pysgpp.extensions.datadriven.learner import LearnerBuilder, SolverTypes
+from pysgpp import DataVector
 from pysgpp.extensions.datadriven.controller.InfoToFile import InfoToScreen
-from pysgpp.extensions.datadriven.data import DataContainer
-from pysgpp import (createOperationLaplace,
-                    createOperationIdentity)
-
 # application imports
 
 class TimeseriesLearner(object):
@@ -49,51 +43,5 @@ class TimeseriesLearner(object):
         for i in xrange(len(test_vector)):
             vector[i] = test_vector[i]
         return opEval.eval(self._learner.alpha, vector)
-
-
-class CustomLearner(object):
-    _learner = None
-    _observer = None
-    _dimension = 0
-
-    def __init__(self, dimension, level, regression_parameter):
-        self._dimension = dimension
-        self._learner = Learner()
-        grid = Grid.createLinearGrid(dimension)
-        grid.getGenerator().regular(level)
-        self._learner.setGrid(grid)
-        # ToDo: What's epsilon?
-        solver = ConjugateGradients(1000, regression_parameter)
-        self._learner.setSolver(solver)
-        stop_policy = TrainingStopPolicy()
-        stop_policy.setAccuracyLimit(pow(1.03*10, -4))
-        self._learner.setStopPolicy(stop_policy)
-        specification = TrainingSpecification()
-        specification.setL(regression_parameter)
-        specification.setCOperator(createOperationIdentity(grid))
-        self._learner.setSpecification(specification)
-
-    def set_training_data(self, points, values):
-        size = len(points)
-        dataMatrix = DataMatrix(size, self._dimension)
-        tempVector = DataVector(self._dimension)
-        valuesVector = DataVector(size)
-        for rowIndex in xrange(size):
-            for colIndex in xrange(self._dimension):
-                tempVector[colIndex] = points[rowIndex][colIndex]
-            dataMatrix.setRow(rowIndex, tempVector)
-            valuesVector[rowIndex] = values[rowIndex]
-        # ToDo: Figure out how the datacontainer has to be structured, python documentation somewhat unclear
-        data = DataContainer(points=dataMatrix, values=valuesVector)
-        self._learner.setDataContainer(data)
-        #data = DataContainer()
-        #data.points = points
-        #data.values = values
-        #self._learner.setDataContainer(data)
-
-    def learn(self):
-        if self._learner.dataContainer is not None:
-            self._learner.learnData()
-
 
 

@@ -23,6 +23,8 @@ class TestTypes(Enum):
     FINANCIAL_DATA = 3
 
 
+
+
 class TimeseriesTest(object):
     _timeseries = None
     _pipeline = None
@@ -38,7 +40,7 @@ class TimeseriesTest(object):
         if(type == TestTypes.HENON):
             self._timeseries = self.calculate_henonmap(total_length, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
         elif(type == TestTypes.JUMP_MAP):
-            raise NotImplementedError("Jump Map not implented yet.")
+            self._timeseries = self.calculate_jumpmap(total_length, 0.1, 0.2)
         elif(type == TestTypes.ANN_COMPETITION):
             raise NotImplementedError("Ann Competition not implented yet.")
         elif (type == TestTypes.FINANCIAL_DATA):
@@ -57,6 +59,10 @@ class TimeseriesTest(object):
         print("Testing " + str(len(test_data[0])) + " values.")
         print("RMSE Test = " + str(self._pipeline.get_training_error(test_data)))
 
+    def _create_pipeline(self, dimension, level, training_series, lambda_parameter, training_accuracy):
+        self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
+        self._pipeline = TimeSeriesPipeline(training_accuracy)
+        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)
 
     def calculate_henonmap(self, length, a, b, x_0, x_1):
         print("Creating Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))
@@ -68,11 +74,14 @@ class TimeseriesTest(object):
         print("Calculated Henon map values")
         return values
 
-    def _create_pipeline(self, dimension, level, training_series, lambda_parameter, training_accuracy):
-        self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
-        self._pipeline = TimeSeriesPipeline(training_accuracy)
-        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)
-
+    def calculate_jumpmap(self, length, x_0, x_1):
+        values = []
+        values.append(x_0)
+        values.append(x_1)
+        for i in xrange(2, length):
+            values.append((values[i - 2] + values[i - 1]) % 1)
+        print("Calculated Jump map values")
+        return values
 
 class HenonTest(object):
     _timeseries = None

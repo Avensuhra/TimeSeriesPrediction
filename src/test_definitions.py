@@ -24,8 +24,6 @@ class TestTypes(Enum):
     FINANCIAL_DATA = 3
 
 
-
-
 class TimeseriesTest(object):
     _timeseries = None
     _scaled_series = None
@@ -47,10 +45,12 @@ class TimeseriesTest(object):
         elif(type == TestTypes.ANN_COMPETITION):
             raise NotImplementedError("Ann Competition not implented yet.")
         elif (type == TestTypes.FINANCIAL_DATA):
-            self._finance_test(quandl_query)
+            self._timeseries = self._finance_test(quandl_query)
+            print(len(self._timeseries))
+            total_length = len(self._timeseries)
             # ToDo: Parse finance_data to dimensional data construct
             # ToDo: Decide which chart source to use (e.g. closed, open, etc..) or all of them?
-            return
+
         print("------------------------------------------------------------")
         print("Starting training")
         self._create_pipeline(dimension, level, lambda_parameter, training_accuracy)
@@ -91,5 +91,7 @@ class TimeseriesTest(object):
 
     def _finance_test(self, s_query):
         data = QuandlDataRetriever().get_financedata(s_query)
-        print(data)
+        print(data.datasets.keys())
+        return data.datasets.get(u'Adj. Close')
+
 

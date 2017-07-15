@@ -18,6 +18,6 @@ def finance_test():
                    lambda_parameter=pow(10, -4), training_accuracy=pow(10, -10), quandl_query="WIKI/AAPL")
 
 if __name__ == "__main__":
-    henon_map_test()
+    #henon_map_test()
     #jumpmap_test()
-    #finance_test()
+    finance_test()

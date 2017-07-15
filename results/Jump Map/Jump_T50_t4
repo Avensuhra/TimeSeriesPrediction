@@ -1,0 +1,90 @@
+General Parameters: 
+Lambda: 0.0001
+Grid level: 4
+Total datapoints: 20000
+Training datapoints: 50
+------------------------------------------------------------
+Calculated Jump map values
+------------------------------------------------------------
+Starting training
+Dimension is: 5
+Number of data entries is: 50
+Adaptive Step:  0
+Solving started
+Starting norm of residuum: 71.9128
+delta: 2.09429
+delta: 0.753638
+delta: 0.600412
+delta: 0.240206
+delta: 0.246139
+delta: 0.191382
+delta: 0.118502
+delta: 0.0768233
+delta: 0.0738314
+delta: 0.0283032
+delta: 0.0212373
+delta: 0.00635497
+delta: 0.00444798
+delta: 0.00292496
+delta: 0.002213
+delta: 0.00256158
+delta: 0.00268022
+delta: 0.00596891
+delta: 0.00225375
+delta: 0.00123511
+delta: 0.000746719
+delta: 0.000312687
+delta: 0.000119252
+delta: 4.07112e-05
+delta: 1.54493e-05
+delta: 3.69185e-06
+delta: 7.22128e-06
+delta: 2.25924e-06
+delta: 1.45163e-06
+delta: 1.76242e-06
+delta: 1.11758e-06
+delta: 5.04471e-07
+delta: 5.94083e-07
+delta: 6.61184e-07
+delta: 8.76147e-07
+delta: 1.17251e-07
+delta: 6.3329e-08
+delta: 3.51857e-08
+delta: 1.25093e-08
+delta: 5.22867e-09
+delta: 5.33038e-09
+delta: 6.33792e-10
+delta: 1.57863e-10
+delta: 5.75964e-10
+delta: 2.1244e-11
+delta: 1.59314e-11
+delta: 1.33329e-11
+delta: 4.62704e-12
+delta: 2.53422e-13
+delta: 3.54554e-13
+delta: 1.82336e-13
+delta: 9.2086e-15
+delta: 9.72539e-16
+delta: 1.83644e-15
+delta: 5.75194e-16
+delta: 3.47714e-17
+delta: 2.14851e-17
+delta: 3.16776e-18
+delta: 4.12749e-18
+delta: 2.10262e-18
+delta: 3.83981e-20
+Solving Complete
+Number of iterations: 61
+Final norm of residuum: 3.83981e-20
+Number of points:  351
+Correct classified on training data:  0.000578791047929
+Learning complete
+Finished training
+------------------------------------------------------------
+Starting evaluation of training data
+Testing 50 values.
+RMSE Train = 0.0240580765634
+------------------------------------------------------------
+Starting evaluation of testing data
+Testing 19950 values.
+RMSE Test = 0.284236907775

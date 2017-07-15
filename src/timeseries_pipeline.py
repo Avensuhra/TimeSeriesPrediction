@@ -26,11 +26,7 @@ class TimeSeriesPipeline(object):
         self._testing_data = None
         self._accuracy = training_accuracy
 
-    def create_learner_with_reshaped_data(self, level, lambda_parameter, data):
-        Log.debug("Creating regression with lambda " + str(lambda_parameter) + " and level " + str(level))
-        self._create_learner(level, data[0], data[1], lambda_parameter)
-
-    def _create_learner(self, level, scaled_samples, scaled_values, lambda_parameter):
+    def create_learner(self, level, scaled_samples, scaled_values, lambda_parameter):
         self._learner = TimeseriesLearner()
         self._learner.set_training_data(scaled_samples, scaled_values)
         self._learner.set_grid(level)
@@ -39,37 +35,15 @@ class TimeSeriesPipeline(object):
         self._learner.set_solver(SolverTypes.CG, self._accuracy)
         self._learner.get_result()
 
-    def set_testing_data_with_file(self, file_name):
-        if self._learner is not None:
-            data = FileParser().arff_to_numpy(file_name)
-            self._set_testing_data(PreProcessing().scale_to_correct_interval(data[0]),
-                                   PreProcessing().scale_to_correct_interval(data[1]))
-        else:
-            Log.error("Need to set learner before specifying testing data.")
-
-    def set_testing_data_with_array(self, data):
-        if self._learner is not None:
-            self._set_testing_data(PreProcessing().scale_to_correct_interval(data[0]),
-                                   PreProcessing().scale_to_correct_interval(data[1]))
-        else:
-            Log.error("Need to set learner before specifying testing data.")
-
-    def _set_testing_data(self, samples, values):
-        self._testing_data = []
-        self._testing_data.append(samples)
-        self._testing_data.append(values)
-
-    # ToDo: Possibly move this to a separate solver class
+    # ToDo: Possibly move this to a separate solver class, cgsolver already preconditions itself with identity matrix
     def precondition_solver(self):
         pass
 
-    def get_training_error(self, training_data):
-        truth_vector = training_data[1]
-        sample_array = training_data[0]
+    def get_prediction_error(self, samples, values):
         prediction_vector = []
-        for i in xrange(len(sample_array)):
-            prediction_vector.append(self._learner.predict_next_value(sample_array[i]))
-        return self.calculate_mean_error(prediction_vector, truth_vector)
+        for i in xrange(len(samples)):
+            prediction_vector.append(self._learner.predict_next_value(samples[i]))
+        return self.calculate_mean_error(prediction_vector, values)
 
     def calculate_mean_error(self, prediction_vector, actual_vector):
         sum = 0

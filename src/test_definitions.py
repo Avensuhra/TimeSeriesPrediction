@@ -4,6 +4,7 @@ from enum import Enum
 # application imports
 from timeseries_pipeline import TimeSeriesPipeline
 from pre_processing import PreProcessing
+from finance_data import QuandlDataRetriever, FinanceData
 
 """
 @Author:    Ingo Mayer
@@ -27,44 +28,49 @@ class TestTypes(Enum):
 
 class TimeseriesTest(object):
     _timeseries = None
+    _scaled_series = None
     _pipeline = None
-    _training_data = None
+    _training_length = None
 
-    def __init__(self, type, dimension, level, total_length, training_length, lambda_parameter, training_accuracy):
+    def __init__(self, type, dimension, level, total_length, training_length, lambda_parameter, training_accuracy, quandl_query = ""):
         print("General Parameters: ")
         print("Lambda: " + str(lambda_parameter))
         print("Grid level: " + str(level))
         print("Total datapoints: " + str(total_length))
         print("Training datapoints: " + str(training_length))
+        self._training_length = training_length
         print("------------------------------------------------------------")
         if(type == TestTypes.HENON):
-            self._timeseries = self.calculate_henonmap(total_length, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
+            self._timeseries = self._calculate_henonmap(total_length, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
         elif(type == TestTypes.JUMP_MAP):
-            self._timeseries = self.calculate_jumpmap(total_length, 0.1, 0.2)
+            self._timeseries = self._calculate_jumpmap(total_length, 0.1, 0.2)
         elif(type == TestTypes.ANN_COMPETITION):
             raise NotImplementedError("Ann Competition not implented yet.")
         elif (type == TestTypes.FINANCIAL_DATA):
-            raise NotImplementedError("Financial Data not implented yet.")
+            self._finance_test(quandl_query)
+            # ToDo: Parse finance_data to dimensional data construct
+            # ToDo: Decide which chart source to use (e.g. closed, open, etc..) or all of them?
+            return
         print("------------------------------------------------------------")
         print("Starting training")
-        self._create_pipeline(dimension, level, self._timeseries[:(training_length + dimension)], lambda_parameter, training_accuracy)
+        self._create_pipeline(dimension, level, lambda_parameter, training_accuracy)
         print("Finished training")
         print("------------------------------------------------------------")
         print("Starting evaluation of training data")
-        print("Testing " + str(len(self._training_data[0])) + " values.")
-        print("RMSE Train = " + str(self._pipeline.get_training_error(self._training_data)))
+        print("Testing " + str(training_length) + " values.")
+        print("RMSE Train = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][:training_length + dimension], self._scaled_series[1][:training_length + dimension])))
         print("------------------------------------------------------------")
         print("Starting evaluation of testing data")
-        test_data = PreProcessing().transform_timeseries_to_datatuple(self._timeseries[(training_length - dimension):], dimension)
-        print("Testing " + str(len(test_data[0])) + " values.")
-        print("RMSE Test = " + str(self._pipeline.get_training_error(test_data)))
+        print("Testing " + str(total_length - training_length) + " values.")
+        print("RMSE Test = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][(training_length - dimension):], self._scaled_series[1][(training_length - dimension):])))
 
-    def _create_pipeline(self, dimension, level, training_series, lambda_parameter, training_accuracy):
-        self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
+    def _create_pipeline(self, dimension, level, lambda_parameter, training_accuracy):
+        self._scaled_series = PreProcessing().transform_timeseries_to_datatuple(self._timeseries, dimension)
         self._pipeline = TimeSeriesPipeline(training_accuracy)
-        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)
+        self._pipeline.create_learner(level=level, lambda_parameter=lambda_parameter, scaled_samples=self._scaled_series[0][:self._training_length + dimension],
+                                      scaled_values=self._scaled_series[1][:self._training_length + dimension])
 
-    def calculate_henonmap(self, length, a, b, x_0, x_1):
+    def _calculate_henonmap(self, length, a, b, x_0, x_1):
         print("Creating Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))
         values = []
         values.append(x_0)
@@ -74,7 +80,7 @@ class TimeseriesTest(object):
         print("Calculated Henon map values")
         return values
 
-    def calculate_jumpmap(self, length, x_0, x_1):
+    def _calculate_jumpmap(self, length, x_0, x_1):
         values = []
         values.append(x_0)
         values.append(x_1)
@@ -83,44 +89,7 @@ class TimeseriesTest(object):
         print("Calculated Jump map values")
         return values
 
-class HenonTest(object):
-    _timeseries = None
-    _pipeline = None
-    _training_data = None
+    def _finance_test(self, s_query):
+        data = QuandlDataRetriever().get_financedata(s_query)
+        print(data)
 
-    def __init__(self, level, total_length, training_length, lambda_parameter, training_accuracy, a, b, x_0, x_1):
-        print("Testing Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))
-        print("Lambda: " + str(lambda_parameter))
-        print("Grid level: " + str(level))
-        print("Total datapoints: " + str(total_length))
-        print("Training datapoints: " + str(training_length))
-        print("------------------------------------------------------------")
-        self._timeseries = self.calculate_timeseries(total_length, a, b, x_0, x_1)
-        print("Calculated Henon map values")
-        print("------------------------------------------------------------")
-        print("Starting training")
-        self._create_pipeline(2, level, self._timeseries[:(training_length + 2)], lambda_parameter, training_accuracy)
-        print("Finished training")
-        print("------------------------------------------------------------")
-        print("Starting evaluation of training data")
-        print("Testing " + str(len(self._training_data[0])) + " values.")
-        print("RMSE Train = " + str(self._pipeline.get_training_error(self._training_data)))
-        print("------------------------------------------------------------")
-        print("Starting evaluation of testing data")
-        test_data = PreProcessing().transform_timeseries_to_datatuple(self._timeseries[(training_length - 2):], 2)
-        print("Testing " + str(len(test_data[0])) + " values.")
-        print("RMSE Test = " + str(self._pipeline.get_training_error(test_data)))
-
-
-    def calculate_timeseries(self, length, a, b, x_0, x_1):
-        values = []
-        values.append(x_0)
-        values.append(x_1)
-        for i in xrange(2, length):
-            values.append(a - pow(values[i - 1], 2) + b*values[i - 2])
-        return values
-
-    def _create_pipeline(self, dimension, level, training_series, lambda_parameter, training_accuracy):
-        self._training_data = PreProcessing().transform_timeseries_to_datatuple(training_series, dimension)
-        self._pipeline = TimeSeriesPipeline(training_accuracy)
-        self._pipeline.create_learner_with_reshaped_data(level, lambda_parameter, self._training_data)

@@ -1,0 +1,71 @@
+General Parameters: 
+Lambda: 0.0001
+Grid level: 5
+Total datapoints: 20000
+Training datapoints: 50
+------------------------------------------------------------
+Calculated Jump map values
+------------------------------------------------------------
+Starting training
+Dimension is: 5
+Number of data entries is: 50
+Adaptive Step:  0
+Solving started
+Starting norm of residuum: 102.748
+delta: 4.35283
+delta: 1.23215
+delta: 1.01192
+delta: 0.421505
+delta: 0.404972
+delta: 0.197895
+delta: 0.10761
+delta: 0.0707634
+delta: 0.0204991
+delta: 0.0134252
+delta: 0.00656071
+delta: 0.00767656
+delta: 0.00324763
+delta: 0.00108736
+delta: 0.000510477
+delta: 0.000112727
+delta: 3.46997e-05
+delta: 7.89507e-06
+delta: 4.96284e-06
+delta: 8.11456e-06
+delta: 1.25065e-06
+delta: 8.80083e-07
+delta: 3.30099e-07
+delta: 1.3139e-07
+delta: 9.26715e-08
+delta: 4.44593e-08
+delta: 2.21419e-08
+delta: 9.97794e-09
+delta: 1.42054e-08
+delta: 1.9373e-09
+delta: 6.12781e-10
+delta: 5.99136e-11
+delta: 4.47011e-11
+delta: 3.56887e-12
+delta: 5.75921e-13
+delta: 4.78209e-13
+delta: 1.1582e-13
+delta: 3.84525e-14
+delta: 3.50654e-15
+delta: 2.27769e-16
+delta: 9.51819e-18
+delta: 4.37442e-19
+Solving Complete
+Number of iterations: 42
+Final norm of residuum: 4.37442e-19
+Number of points:  1471
+Correct classified on training data:  2.57077783389e-05
+Learning complete
+Finished training
+------------------------------------------------------------
+Starting evaluation of training data
+Testing 50 values.
+RMSE Train = 0.00507028385191
+------------------------------------------------------------
+Starting evaluation of testing data
+Testing 19950 values.
+RMSE Test = 0.220062549937

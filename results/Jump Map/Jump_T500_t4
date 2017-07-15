@@ -1,0 +1,195 @@
+General Parameters: 
+Lambda: 0.0001
+Grid level: 4
+Total datapoints: 20000
+Training datapoints: 500
+------------------------------------------------------------
+Calculated Jump map values
+------------------------------------------------------------
+Starting training
+Dimension is: 5
+Number of data entries is: 500
+Adaptive Step:  0
+Solving started
+Starting norm of residuum: 7991.02
+delta: 118.84
+delta: 77.5299
+delta: 29.0515
+delta: 13.3698
+delta: 11.6906
+delta: 5.23534
+delta: 3.54493
+delta: 3.62488
+delta: 1.692
+delta: 1.58305
+delta: 1.50823
+delta: 0.658923
+delta: 0.7232
+delta: 0.75794
+delta: 0.416388
+delta: 0.345099
+delta: 0.614682
+delta: 0.135247
+delta: 0.162051
+delta: 0.134674
+delta: 0.0983366
+delta: 0.0733444
+delta: 0.0754118
+delta: 0.0395497
+delta: 0.0266811
+delta: 0.0213699
+delta: 0.0554635
+delta: 0.0236682
+delta: 0.0116838
+delta: 0.0939368
+delta: 0.0179924
+delta: 0.0100117
+delta: 0.00538876
+delta: 0.0036619
+delta: 0.0043431
+delta: 0.00353474
+delta: 0.00400191
+delta: 0.0019027
+delta: 0.00121787
+delta: 0.00283144
+delta: 0.000765329
+delta: 0.000487417
+delta: 0.0027044
+delta: 0.000709963
+delta: 0.000615073
+delta: 0.000245515
+delta: 0.00094805
+delta: 0.00010193
+delta: 0.000290761
+delta: 6.01167e-05
+delta: 4.50346e-05
+delta: 0.000208475
+delta: 5.38986e-05
+delta: 5.20972e-05
+delta: 2.15541e-05
+delta: 1.12917e-05
+delta: 3.53296e-05
+delta: 1.00953e-05
+delta: 1.67848e-05
+delta: 5.76127e-06
+delta: 8.92299e-06
+delta: 3.01972e-06
+delta: 1.11396e-05
+delta: 1.95046e-06
+delta: 5.74739e-06
+delta: 9.77445e-06
+delta: 1.08892e-06
+delta: 2.20598e-06
+delta: 2.52006e-06
+delta: 6.41055e-07
+delta: 1.80035e-06
+delta: 2.41445e-07
+delta: 1.63237e-06
+delta: 1.38657e-07
+delta: 7.33773e-08
+delta: 3.3433e-07
+delta: 9.21245e-08
+delta: 7.77127e-08
+delta: 6.84876e-08
+delta: 3.34868e-08
+delta: 3.93508e-08
+delta: 2.10163e-08
+delta: 4.89437e-08
+delta: 2.73855e-08
+delta: 2.29987e-08
+delta: 7.35249e-09
+delta: 1.34511e-08
+delta: 8.12258e-09
+delta: 4.31359e-09
+delta: 1.80923e-08
+delta: 2.34869e-09
+delta: 3.78067e-09
+delta: 9.89055e-09
+delta: 7.0296e-10
+delta: 1.39138e-09
+delta: 5.84934e-10
+delta: 4.36288e-09
+delta: 2.17222e-10
+delta: 3.39976e-10
+delta: 2.26473e-10
+delta: 1.18002e-10
+delta: 1.16577e-10
+delta: 6.30701e-11
+delta: 1.46876e-10
+delta: 1.049e-10
+delta: 3.88075e-11
+delta: 3.53395e-11
+delta: 5.66653e-11
+delta: 4.80604e-11
+delta: 1.60322e-11
+delta: 2.21297e-11
+delta: 3.97572e-11
+delta: 2.26241e-11
+delta: 6.11033e-12
+delta: 1.19475e-11
+delta: 2.8812e-12
+delta: 8.70915e-12
+delta: 1.31986e-11
+delta: 1.35009e-12
+delta: 1.13758e-12
+delta: 5.46366e-12
+delta: 3.10265e-12
+delta: 4.35447e-13
+delta: 4.92215e-13
+delta: 1.91738e-12
+delta: 3.11133e-13
+delta: 4.43905e-13
+delta: 1.22577e-13
+delta: 1.9466e-13
+delta: 1.15109e-13
+delta: 2.92707e-14
+delta: 9.43037e-14
+delta: 1.25465e-13
+delta: 6.61804e-14
+delta: 1.82597e-14
+delta: 2.56519e-14
+delta: 3.43268e-14
+delta: 3.9014e-15
+delta: 1.04357e-14
+delta: 1.30154e-14
+delta: 3.99778e-15
+delta: 3.91671e-15
+delta: 7.08567e-15
+delta: 4.65807e-15
+delta: 6.68586e-15
+delta: 2.42911e-15
+delta: 3.04355e-15
+delta: 4.32301e-15
+delta: 1.02995e-15
+delta: 4.53698e-15
+delta: 7.76107e-16
+delta: 3.97565e-16
+delta: 5.3739e-16
+delta: 1.6825e-16
+delta: 4.01477e-16
+delta: 7.99378e-16
+delta: 7.06949e-16
+delta: 1.61527e-16
+delta: 1.46467e-16
+delta: 1.17235e-16
+delta: 1.10733e-16
+delta: 9.03275e-17
+delta: 2.60888e-17
+Solving Complete
+Number of iterations: 163
+Final norm of residuum: 2.60888e-17
+Number of points:  351
+Correct classified on training data:  0.00707922611214
+Learning complete
+Finished training
+------------------------------------------------------------
+Starting evaluation of training data
+Testing 500 values.
+RMSE Train = 0.084138137085
+------------------------------------------------------------
+Starting evaluation of testing data
+Testing 19500 values.
+RMSE Test = 0.127064306419
+
+Process finished with exit code 0
+

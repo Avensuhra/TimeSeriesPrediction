@@ -1,5 +1,6 @@
 # standard imports
 from enum import Enum
+
 # third party imports
 # application imports
 from timeseries_pipeline import TimeSeriesPipeline
@@ -63,6 +64,10 @@ class TimeseriesTest(object):
         print("Starting evaluation of testing data")
         print("Testing " + str(total_length - training_length) + " values.")
         print("RMSE Test = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][(training_length - dimension):], self._scaled_series[1][(training_length - dimension):])))
+        print("------------------------------------------------------------")
+        print("Visualizing results")
+        # ToDo: Move visualization to here from pipeline
+
 
     def _create_pipeline(self, dimension, level, lambda_parameter, training_accuracy):
         self._scaled_series = PreProcessing().transform_timeseries_to_datatuple(self._timeseries, dimension)

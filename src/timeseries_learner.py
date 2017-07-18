@@ -19,13 +19,13 @@ class TimeseriesLearner(object):
         self._builder = self._builder.withGrid().withLevel(level)
 
     def set_specification(self, lambda_parameter):
-        self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
+        self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(100)
 
     def set_folding_policy(self):
         self._builder.withRandomFoldingPolicy().withLevel(3)
 
     def set_stop_policy(self):
-        self._builder = self._builder.withStopPolicy()
+        self._builder = self._builder.withStopPolicy().withAdaptiveItarationLimit(20)
 
     def set_solver(self, type, accuracy):
         if type == SolverTypes.CG:
@@ -35,6 +35,9 @@ class TimeseriesLearner(object):
         self._learner = self._builder.withProgressPresenter(InfoToScreen()).andGetResult()
         gs = self._learner.grid.getStorage()
         Log.debug("Grid points: %i" % gs.getSize())
+        alpha = DataVector(gs.getSize(), 0.0)
+        self._learner.errors = alpha
+        self._learner.refineGrid()
         self._learner.learnData()
 
     def predict_next_value(self, test_vector):

@@ -26,13 +26,11 @@ class PreProcessing(object):
         rescaled_series = self.scale_to_correct_interval(timeseries)
         length = len(timeseries) - dimension
         sample_array = numpy.ndarray(shape=(length, dimension))
-        Log.debug("Created sample_array with shape " + str(sample_array.shape))
         for i in xrange(length):
             for j in xrange(dimension):
                 # each "dimension" goes 1 step forward in time
                 sample_array[i][j] = rescaled_series[i + j]
         value_array = rescaled_series[dimension:]
-        Log.debug("Created values_array with length " + str((len(value_array))))
 
         return (sample_array, value_array)
 

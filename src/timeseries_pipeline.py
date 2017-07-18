@@ -1,12 +1,11 @@
 # standard imports
 import numpy as np
 # third party imports
+import matplotlib.pyplot as plt
 # application imports
-import logging as Log
-from pre_processing import PreProcessing
-from file_parser import FileParser
 from pysgpp.extensions.datadriven.learner import SolverTypes
 from timeseries_learner import TimeseriesLearner
+from visualization import Visualization
 
 """
 @Author:    Ingo Mayer
@@ -43,13 +42,15 @@ class TimeSeriesPipeline(object):
         prediction_vector = []
         for i in xrange(len(samples)):
             prediction_vector.append(self._learner.predict_next_value(samples[i]))
+
         return self.calculate_mean_error(prediction_vector, values)
 
     def calculate_mean_error(self, prediction_vector, actual_vector):
         sum = 0
         for i in range(len(prediction_vector)):
             sum += pow((prediction_vector[i] - actual_vector[i]), 2)
-
+        #plt.plot(prediction_vector, 'r--', actual_vector, 'g--')
+        #plt.show()
         return np.sqrt(sum/len(prediction_vector))
 
 

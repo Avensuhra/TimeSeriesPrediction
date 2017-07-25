@@ -1,7 +1,8 @@
 # standard imports
 from enum import Enum
-
+import math
 # third party imports
+import nolds
 # application imports
 from timeseries_pipeline import TimeSeriesPipeline
 from pre_processing import PreProcessing
@@ -30,42 +31,58 @@ class TimeseriesTest(object):
     _scaled_series = None
     _pipeline = None
     _training_length = None
+    _with_adaptivity = None
 
-    def __init__(self, type, dimension, level, total_length, training_length, lambda_parameter, training_accuracy, quandl_query = ""):
+    def __init__(self, type, dimension, level, training_length, lambda_parameter, training_accuracy, quandl_query = "",
+                 with_adaptivity=True, testing_length=0):
         print("General Parameters: ")
         print("Lambda: " + str(lambda_parameter))
         print("Grid level: " + str(level))
-        print("Total datapoints: " + str(total_length))
         print("Training datapoints: " + str(training_length))
         self._training_length = training_length
+        self._with_adaptivity = with_adaptivity
         print("------------------------------------------------------------")
         if(type == TestTypes.HENON):
-            self._timeseries = self._calculate_henonmap(total_length, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
+            self._timeseries = self._calculate_henonmap(20000, a=1.4, b=0.3, x_0=0.1, x_1=0.2)
         elif(type == TestTypes.JUMP_MAP):
-            self._timeseries = self._calculate_jumpmap(total_length, 0.1, 0.2)
+            self._timeseries = self._calculate_jumpmap(20000, 0.1, 0.2)
         elif(type == TestTypes.ANN_COMPETITION):
             raise NotImplementedError("Ann Competition not implented yet.")
         elif (type == TestTypes.FINANCIAL_DATA):
             self._timeseries = self._finance_test(quandl_query)
-            print(len(self._timeseries))
-            total_length = len(self._timeseries)
-            # ToDo: Parse finance_data to dimensional data construct
-            # ToDo: Decide which chart source to use (e.g. closed, open, etc..) or all of them?
-
+            print("Number of chart points: " + str(len(self._timeseries)))
+            # ToDo: Decide which chart source to use (e.g. closed, open, etc..) or all of them? Currently: Adjusted Close
+        print("------------------------------------------------------------")
+        print("Calculating embedding dimension")
+        embedding_dims = []
+        for i in xrange(1, 101):
+            embedding_dims.append(nolds.corr_dim(self._timeseries[:training_length], i))
+        max_dim = max(embedding_dims)
+        # round for 2 digits accuracy
+        if(100*max_dim%100 < 50):
+            embedding_dimension = int(math.floor(max_dim))
+        else:
+            embedding_dimension = int(math.ceil(max_dim))
+        print("Embedding dimension: " + str(embedding_dimension))
+        dimension = embedding_dimension*2 + 1
         print("------------------------------------------------------------")
         print("Starting training")
         self._create_pipeline(dimension, level, lambda_parameter, training_accuracy)
         print("Finished training")
         print("------------------------------------------------------------")
-        print("Starting evaluation of training data")
-        print("Testing " + str(training_length) + " values.")
-        print("RMSE Train = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][:training_length + dimension], self._scaled_series[1][:training_length + dimension])))
+        print("Starting evaluation of training data. Predicting 1 step forward for each delay-vector.")
+        print("Testing " + str(len(self._scaled_series[0][:training_length])) + " values.")
+        print("RMSE Train = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][:training_length], self._scaled_series[1][:training_length])))
         print("------------------------------------------------------------")
-        print("Starting evaluation of testing data")
-        print("Testing " + str(total_length - training_length) + " values.")
-        print("RMSE Test = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][(training_length - dimension):], self._scaled_series[1][(training_length - dimension):])))
+        print("Starting evaluation of testing data. Predicting 1 step forward for each delay-vector.")
+        print("Testing " + str(len(self._scaled_series[0][(training_length + 1):(training_length + testing_length)])) + " values.")
+        print("RMSE Test = " + str(self._pipeline.get_prediction_error(self._scaled_series[0][(training_length + 1):(training_length + testing_length)],
+                                                                       self._scaled_series[1][(training_length + 1):(training_length + testing_length)])))
         print("------------------------------------------------------------")
-        print("Visualizing results")
+        prediction_length = 10
+        print("Starting evaluation of testing data. Predicting " + str(prediction_length) + " steps forward for each delay-vector.")
+        print("Not implemented yet.")
+        #print("Visualizing results")
         # ToDo: Move visualization to here from pipeline
 
 
@@ -73,7 +90,7 @@ class TimeseriesTest(object):
         self._scaled_series = PreProcessing().transform_timeseries_to_datatuple(self._timeseries, dimension)
         self._pipeline = TimeSeriesPipeline(training_accuracy)
         self._pipeline.create_learner(level=level, lambda_parameter=lambda_parameter, scaled_samples=self._scaled_series[0][:self._training_length + dimension],
-                                      scaled_values=self._scaled_series[1][:self._training_length + dimension])
+                                      scaled_values=self._scaled_series[1][:self._training_length + dimension], with_adaptivity=self._with_adaptivity)
 
     def _calculate_henonmap(self, length, a, b, x_0, x_1):
         print("Creating Henon map with parameters: \na = " + str(a) + "\nb = " + str(b))

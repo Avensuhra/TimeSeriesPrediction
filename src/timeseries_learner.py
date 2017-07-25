@@ -18,8 +18,11 @@ class TimeseriesLearner(object):
     def set_grid(self, level):
         self._builder = self._builder.withGrid().withLevel(level)
 
-    def set_specification(self, lambda_parameter):
-        self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(100)
+    def set_specification(self, lambda_parameter, with_adaptivity):
+        if(with_adaptivity):
+            self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
+        else:
+            self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
 
     def set_folding_policy(self):
         self._builder.withRandomFoldingPolicy().withLevel(3)
@@ -29,7 +32,7 @@ class TimeseriesLearner(object):
 
     def set_solver(self, type, accuracy):
         if type == SolverTypes.CG:
-            self._builder = self._builder.withCGSolver().withAccuracy(accuracy).withImax(1000)
+            self._builder = self._builder.withCGSolver().withAccuracy(accuracy).withImax(400)
 
     def get_result(self):
         self._learner = self._builder.withProgressPresenter(InfoToScreen()).andGetResult()

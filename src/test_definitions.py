@@ -64,6 +64,7 @@ class TimeseriesTest(object):
         else:
             embedding_dimension = int(math.ceil(max_dim))
         print("Embedding dimension: " + str(embedding_dimension))
+        # See Takens theorem
         dimension = embedding_dimension*2 + 1
         print("------------------------------------------------------------")
         print("Starting training")

@@ -1,6 +1,4 @@
-from pyqtgraph.Qt import QtGui, QtCore
 import numpy as np
-import pyqtgraph as pg
 
 
 class Visualization(object):

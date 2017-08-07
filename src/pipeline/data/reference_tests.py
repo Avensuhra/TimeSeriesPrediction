@@ -4,8 +4,8 @@ import math
 # third party imports
 import nolds
 # application imports
-from timeseries_pipeline import TimeSeriesPipeline
-from pre_processing import PreProcessing
+from pipeline.timeseries_pipeline import TimeSeriesPipeline
+from pipeline.pre_processing import PreProcessing
 from finance_data import QuandlDataRetriever, FinanceData
 
 """

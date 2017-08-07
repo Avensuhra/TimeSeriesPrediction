@@ -1,30 +1,18 @@
 # TimeSeriesPrediction
-This repository is the code base for the Bachelor's thesis 'Financial Time Series Prediction using the Sparse Grids Library SG++'.
+This repository is the code base for the Bachelor's thesis 'Analysis of financial timeseries prediction using sparse grids'
 
-Implemented:
-A basic pipeline that can evaluate functions based on the SG++ tutorial. Needs to be modified to accept arbitrary datasets.
+Sparse Grid Library: SG++ http://sgpp.sparsegrids.org/
 
-# ToDo's:
-1. Rebuild the reference paper grid and cross-check results
-1.1 Implement documented Pseudocode, create custom system matrix.
-1.2 Write error measurement function. Use root mean squared error (RMSE) for now. Used in comparison paper.
-1.3 Test it with the Henon map.
+The implementation is based on the reference paper "An adaptive sparse grid approach for time series prediction" by B. Bohn and M. Griebel.
 
-2. Create .csv file reader for time series {low, high, open, close, adjusted close, volume}
+Done so far:
+1. Compared results of the SG++ pipeline with the results in the reference paper for regular and space-adaptive sparse grids for the test cases Henon Map and Jump Map.
+2. Built a basic pipeline for financial data, using data provided by Quandl (https://www.quandl.com/) to evaluate the prediction accuracy on the U.S. stock market.
 
-3. Create Pipeline for Financial Time Series (input, grid, output)
-    3.1 Pre-processing of data into correct format
-    3.2 Pre-conditioning the iteratior
-    3.3 Setup grid with the correct function, SG++ tutorial only uses a simplified version
-    3.4 Calculate alphas
-    3.5 Evaluate
-
-4. Check Pipeline for Financial Time Series
-
-5. Test for possible correlations between the different input streams from 2.
-
+Planned:
+1. Store calculated embedded dimension for each stock in a file so it doesn't have to be recalculated every time.
+2. Modify the prediction to only predict n steps into the future and then retrain.
+3. Implement a statistical evaluation of the prediction results
+4. (Optional) Implement a stock-trading algorithm that buys/sells according to the prediction on an ideal platform (no buy/sell delay, no fees)
+5. (Optional) Combine different charts instead of only using adjusted close
 6. Improve the prediction
-
-
-Optional:
-- Build automatic result visualization

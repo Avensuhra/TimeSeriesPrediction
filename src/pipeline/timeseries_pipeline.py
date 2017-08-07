@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 # application imports
 from pysgpp.extensions.datadriven.learner import SolverTypes
-from timeseries_learner import TimeseriesLearner
-from visualization import Visualization
+from pipeline.sparsegrid.timeseries_learner import TimeseriesLearner
+from view.visualization import Visualization
 
 """
 @Author:    Ingo Mayer

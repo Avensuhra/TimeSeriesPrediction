@@ -11,8 +11,10 @@ Conventions (a.k.a. read this if you're running into errors):
 4.  Try to use already downloaded data, retrieving data & calculating embedding dimensions for 3000+ companies takes a while
 """
 
-
+from pysgpp.extensions.datadriven.learner import SolverTypes
 from preprocessing.csv_parser import CSVParser
+from timeseries_learner import TimeseriesLearner
+from preprocessing.pre_processing import PreProcessing
 from .data.chart_queries import QuandlDataRetriever
 import nolds
 import math
@@ -25,12 +27,16 @@ class Pipeline(object):
     _adaptivity = None
     _regression_parameter = None
     _grid_level = None
+    _dimension = None
+    _training_accuracy = None
+    _learner = None
 
-    def __init__(self, training_length, use_adaptivity, regression_parameter, grid_level):
+    def __init__(self, training_length, use_adaptivity, regression_parameter, grid_level, training_accuracy):
         self._training_length = training_length
         self._adaptivity = use_adaptivity
         self._regression_parameter = regression_parameter
         self._grid_level = grid_level
+        self._training_accuracy = training_accuracy
 
     def run(self):
         print("General Parameters: ")
@@ -47,10 +53,8 @@ class Pipeline(object):
             # Get data from Quandl or csv file if already downloaded
             tmp_name = element.ticker[element.ticker.find("/")+1:].split()[0]
             if os.path.isfile("../quandl_data/{}.csv".format(tmp_name)):
-                # edit this out later
-                continue;
                 element.datasets = CSVParser().read_datasets_from_csv(tmp_name)
-            else:
+            else:   
                 parsed_data = QuandlDataRetriever().get_financedata(element.ticker)
                 element.datasets = parsed_data.datasets
                 # write data to file so it doesn't have to be downloaded again
@@ -62,7 +66,15 @@ class Pipeline(object):
                 element.embedding_dimension = self._calculate_embedding_dimension(dataset)
                 CSVParser().write_embedding_dimension(element.ticker, element.embedding_dimension)
             print("Embedding dimension is {}".format(element.embedding_dimension))
+            # Taken's delay embedding theorem
+            self._dimension = 2*element.embedding_dimension + 1
+            print("------------------------------------------------------------")
+            print("Converting data into dimensional construct.")
+            scaled_delay_vectors = self._prepare_single_dataset(dataset)
             # Build learner
+            print("Testing " + str(len(scaled_delay_vectors[0][:self._training_length])) + " values.")
+            self._build_learner(scaled_delay_vectors[0][:self._training_length],
+                                scaled_delay_vectors[1][:self._training_length])
             # Train learner
             # start prediction loop
             # write results to file
@@ -83,8 +95,17 @@ class Pipeline(object):
     def _get_tickers(self):
         self._data = CSVParser().parse_tickers()
 
-    def _build_learner(self):
-        pass
+    def _prepare_single_dataset(self, dataset):
+        return PreProcessing().transform_timeseries_to_datatuple(dataset, self._dimension)
+
+    def _build_learner(self, training_samples, training_values):
+        self._learner = TimeseriesLearner()
+        self._learner.set_training_data(training_samples, training_values)
+        self._learner.set_grid(self._grid_level)
+        self._learner.set_specification(self._regression_parameter, self._adaptivity)
+        self._learner.set_stop_policy()
+        self._learner.set_solver(SolverTypes.CG, self._training_accuracy)
+        self._learner.get_result()
 
     def _start_prediction(self):
         pass

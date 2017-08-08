@@ -39,5 +39,5 @@ class CSVParser(object):
         df.to_csv("../quandl_data/{}.csv".format(ticker), sep=",", encoding="utf-8")
 
     def read_datasets_from_csv(self, ticker):
-        df = pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))
+        return pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))
         

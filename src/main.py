@@ -16,7 +16,7 @@ from pipeline.pipeline import Pipeline
 #                   lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13))
 
 def finance_test():
-    Pipeline(500, True, pow(10, -4), 3).run()
+    Pipeline(500, False, pow(10, -4), 3, pow(10, -13)).run()
     #TimeseriesTest(type=TestTypes.FINANCIAL_DATA, dimension=2, level=8, training_length=5000, testing_length=10,
      #              lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13), quandl_query="WIKI/AAPL", with_adaptivity=False)
 

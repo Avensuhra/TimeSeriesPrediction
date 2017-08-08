@@ -47,6 +47,8 @@ class Pipeline(object):
             # Get data from Quandl or csv file if already downloaded
             tmp_name = element.ticker[element.ticker.find("/")+1:].split()[0]
             if os.path.isfile("../quandl_data/{}.csv".format(tmp_name)):
+                # edit this out later
+                continue;
                 element.datasets = CSVParser().read_datasets_from_csv(tmp_name)
             else:
                 parsed_data = QuandlDataRetriever().get_financedata(element.ticker)

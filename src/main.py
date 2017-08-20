@@ -4,7 +4,7 @@ import os
 import scipy
 # application imports
 #from pipeline.data.reference_tests import TimeseriesTest, TestTypes
-from pipeline.pipeline import Pipeline
+from pipeline.finance_pipeline import FinancePipeline
 
 
 #def henon_map_test():
@@ -16,7 +16,9 @@ from pipeline.pipeline import Pipeline
 #                   lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13))
 
 def finance_test():
-    Pipeline(500, False, pow(10, -4), 3, pow(10, -13)).run()
+    for level in xrange(3, 10):
+        FinancePipeline(training_length=500, use_adaptivity=False, regression_parameter=pow(10, -4), grid_level=level,
+                        training_accuracy=pow(10, -13), test_type="regGrid", number_of_companies=500).run()
     #TimeseriesTest(type=TestTypes.FINANCIAL_DATA, dimension=2, level=8, training_length=5000, testing_length=10,
      #              lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13), quandl_query="WIKI/AAPL", with_adaptivity=False)
 

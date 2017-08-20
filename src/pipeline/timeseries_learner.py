@@ -35,9 +35,8 @@ class TimeseriesLearner(object):
             self._builder = self._builder.withCGSolver().withAccuracy(accuracy).withImax(400)
 
     def get_result(self):
-        self._learner = self._builder.withProgressPresenter(InfoToScreen()).andGetResult()
+        self._learner = self._builder.andGetResult() #.withProgressPresenter(InfoToScreen())
         gs = self._learner.grid.getStorage()
-        Log.debug("Grid points: %i" % gs.getSize())
         alpha = DataVector(gs.getSize(), 0.0)
         self._learner.errors = alpha
         self._learner.refineGrid()

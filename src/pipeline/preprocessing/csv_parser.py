@@ -1,4 +1,5 @@
 import numpy
+import os
 import pandas
 import csv
 from model.finance_data import RawFinanceData
@@ -38,6 +39,23 @@ class CSVParser(object):
         df = pandas.DataFrame.from_dict(datasets)
         df.to_csv("../quandl_data/{}.csv".format(ticker), sep=",", encoding="utf-8")
 
+    def write_rmses_to_file(self, rmse, path, is_training_set):
+        self._check_dir(path)
+        df = pandas.DataFrame.from_dict(rmse)
+        if is_training_set:
+            df.to_csv(path + "/training_errors.csv", sep=",", encoding="utf-8")
+        else:
+             df.to_csv(path + "/testing_errors.csv", sep=",", encoding="utf-8")
+       
+
     def read_datasets_from_csv(self, ticker):
         return pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))
+
+    def write_prediction_results_to_csv(self, results, path):
+        self._check_dir(path)
+        df = pandas.DataFrame.from_dict(results)
+        df.to_csv(path + "/{}.csv".format(ticker))
         
+    def _check_dir(self, path):
+        if not os.path.exists(path):
+            os.mkdir(path)

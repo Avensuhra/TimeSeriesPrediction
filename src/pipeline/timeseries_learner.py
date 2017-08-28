@@ -5,6 +5,7 @@ import pysgpp
 from pysgpp.extensions.datadriven.learner import LearnerBuilder, SolverTypes
 from pysgpp import DataVector
 from pysgpp.extensions.datadriven.controller.InfoToFile import InfoToScreen
+from pysgpp.extensions.datadriven.learner import Types
 # application imports
 
 class TimeseriesLearner(object):
@@ -16,19 +17,19 @@ class TimeseriesLearner(object):
         self._builder = self._builder.withTrainingDataFromNumPyArray(scaled_samples, scaled_values)
 
     def set_grid(self, level):
-        self._builder = self._builder.withGrid().withLevel(level)
+        self._builder = self._builder.withGrid().withLevel(level).withBorder(Types.BorderTypes.NONE)
 
     def set_specification(self, lambda_parameter, with_adaptivity):
-        if(with_adaptivity):
-            self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
-        else:
-            self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
+        #if(with_adaptivity):
+            #self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
+        #else:
+        self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
 
     def set_folding_policy(self):
         self._builder.withRandomFoldingPolicy().withLevel(3)
 
     def set_stop_policy(self):
-        self._builder = self._builder.withStopPolicy().withAdaptiveItarationLimit(20)
+        self._builder = self._builder.withStopPolicy()#.withAdaptiveItarationLimit(20)
 
     def set_solver(self, type, accuracy):
         if type == SolverTypes.CG:
@@ -40,6 +41,9 @@ class TimeseriesLearner(object):
         alpha = DataVector(gs.getSize(), 0.0)
         self._learner.errors = alpha
         self._learner.refineGrid()
+        self._learner.learnData()
+
+    def retrain(self):
         self._learner.learnData()
 
     def predict_next_value(self, test_vector):

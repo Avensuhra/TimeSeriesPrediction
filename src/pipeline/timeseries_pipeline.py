@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # application imports
 from pysgpp.extensions.datadriven.learner import SolverTypes
-from finance_pipeline.sparsegrid.timeseries_learner import TimeseriesLearner
+from pipeline.timeseries_learner import TimeseriesLearner
 from view.visualization import Visualization
 
 """
@@ -75,8 +75,6 @@ class TimeSeriesPipeline(object):
         sum = 0
         for i in range(len(prediction_vector)):
             sum += pow((prediction_vector[i] - actual_vector[i]), 2)
-        plt.plot(prediction_vector, 'ro', actual_vector, 'g--')
-        plt.show()
         return np.sqrt(sum/len(prediction_vector))
 
 

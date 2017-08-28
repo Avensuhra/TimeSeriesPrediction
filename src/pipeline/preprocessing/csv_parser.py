@@ -4,8 +4,29 @@ import pandas
 import csv
 from model.finance_data import RawFinanceData
 
-class CSVParser(object):
-    
+class CSVParser(object):             
+
+    def parse_sp500_tickers(self):
+        sp500_tickers = []
+        with open("../sp500.csv") as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                for element in row:
+                    sp500_tickers.append(element)     
+        data = self.parse_tickers()
+        sp500_data = []
+        counter = 0
+        for ticker in sp500_tickers:
+            ticker = ticker.strip()
+            for item in data:
+                name = item.ticker[item.ticker.find("/")+1:].split()[0]
+                if name == ticker:   
+                    sp500_data.append(item)
+        return sp500_data
+
+    def parse_crypto_tickers(self):
+        pass
+
     def parse_tickers(self):
         data = []
         df = pandas.read_csv("../stock_tickers.csv")
@@ -31,7 +52,6 @@ class CSVParser(object):
             if(line[4] == ticker):
                 print("Writing embedding dimension")
                 line[6] = str(dimension)
-
         writer = csv.writer(open("../stock_tickers.csv", "w"))
         writer.writerows(lines)
 
@@ -46,7 +66,6 @@ class CSVParser(object):
             df.to_csv(path + "/training_errors.csv", sep=",", encoding="utf-8")
         else:
              df.to_csv(path + "/testing_errors.csv", sep=",", encoding="utf-8")
-       
 
     def read_datasets_from_csv(self, ticker):
         return pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))

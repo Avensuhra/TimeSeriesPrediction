@@ -1,0 +1,22 @@
+General Parameters:
+Lambda: 2.38418579102e-07
+Grid level: 7
+Dimension: 2
+Training datapoints: 5000
+------------------------------------------------------------
+Creating Henon map with parameters:
+a = 1.4
+b = 0.3
+Calculated Henon map values
+------------------------------------------------------------
+Starting training
+Min = -1.79848438891| Max = 1.78215567927| Padding = 0.895160017046
+Finished training
+------------------------------------------------------------
+Starting evaluation of training data. Predicting 1 step forward for each delay-vector.
+Testing 5000 values.
+RMSE Train = 0.000117517674065
+------------------------------------------------------------
+Starting evaluation of testing data. Predicting 1 step forward for each delay-vector.
+Testing 14997 values.
+RMSE Test = 0.000128858572252

@@ -20,10 +20,10 @@ class TimeseriesLearner(object):
         self._builder = self._builder.withGrid().withLevel(level).withBorder(Types.BorderTypes.NONE)
 
     def set_specification(self, lambda_parameter, with_adaptivity):
-        #if(with_adaptivity):
-            #self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
-        #else:
-        self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
+        if(with_adaptivity):
+            self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
+        else:
+            self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
 
     def set_folding_policy(self):
         self._builder.withRandomFoldingPolicy().withLevel(3)

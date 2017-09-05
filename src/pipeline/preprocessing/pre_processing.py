@@ -40,7 +40,7 @@ class PreProcessing(object):
         max_value = numpy.amax(timeseries)
         min_value = numpy.amin(timeseries)
         padding = (max_value - min_value)/4
-        print("Min = {0}| Max = {1}| Padding = {2}".format(min_value, max_value, padding))
+        #print("Min = {0}| Max = {1}| Padding = {2}".format(min_value, max_value, padding))
         max_value += padding
         min_value -= padding
         # rescale

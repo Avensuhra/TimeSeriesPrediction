@@ -33,7 +33,6 @@ class PipelineManager(object):
         if(self._pipeline.adaptivity):
             self._pipeline.adapt_threshold = float(self._gui.grid_setup.adapt_threshold.text())
             self._pipeline.adapt_rate = float(self._gui.grid_setup.adapt_rate.text())
-        self._pipeline.training_length = 500
         self._prepare_data()
 
     def _prepare_data(self):

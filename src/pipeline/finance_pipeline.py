@@ -20,6 +20,7 @@ from postprocessing import error_calculation as error_functions
 from datetime import datetime, date, timedelta
 import nolds
 import math
+import numpy
 import os.path
 
 
@@ -166,7 +167,6 @@ class FinancePipeline(object):
         print("Lambda: {}".format(self._regression_parameter))
         print("Grid level: {}".format(self._grid_level))
         print("Adaptivity: {}".format(self._adaptivity))
-        print("Training length: {}".format(self._training_length))
         print("Evaluating {} companies.".format(len(self._data)))
         print("------------------------------------------------------------")
         folder_name = "../results/FinanceData/l{0}_c{1}_{2}".format(self._grid_level, 
@@ -202,18 +202,27 @@ class FinancePipeline(object):
             self._dimension = 2*element.embedding_dimension + 1
             print("Converting data into dimensional construct.")
             # Split dataset into training and test set according to selected dates
-            training_set = dataset[str(self._startdate_train):str(self._enddate_train)]
-            testing_set = dataset[str(self._startdate_test):str(self._enddate_test)]
-            print len(training_set), len(testing_set)
-            if len(training_set) <= self._dimension or len(testing_set) <= self._dimension:
+            complete_set = dataset[str(self._startdate_train):str(self._enddate_test)]
+            training_length = len(dataset[str(self._startdate_train):str(self._enddate_train)]) - self._dimension
+            testing_length = len(dataset[str(self._startdate_test):str(self._enddate_test)]) - self._dimension
+            if training_length <= self._dimension or testing_length <= self._dimension:
                 print("Not enough data to test this company.")
                 continue;
-            scaled_training_delayvectors = self._prepare_single_dataset(training_set)
-            scaled_testing_delayvectors = self._prepare_single_dataset(testing_set)
+            scaled_vectors = self._prepare_single_dataset(complete_set)
+            scaled_training_delayvectors = []
+            scaled_training_delayvectors.append(scaled_vectors[0][:(training_length)])
+            scaled_training_delayvectors.append(scaled_vectors[1][:(training_length)])
+            scaled_testing_delayvectors = []
+            scaled_testing_delayvectors.append(scaled_vectors[0][(training_length + 1):])
+            scaled_testing_delayvectors.append(scaled_vectors[1][(training_length + 1):])
             # Build learner
             training_samples = scaled_training_delayvectors[0]
             training_values = scaled_training_delayvectors[1]
-            print("Training with {} values.".format(len(training_samples)))
+            if len(training_samples) != training_length:
+                print("Wrong number of training vectors. Should be {0} and is {1}. Aborting.".format(training_length, len(training_samples)))
+                return
+            else:
+                print("Setup complete. Starting training.")
             self._build_learner(training_samples, training_values)
             training_errors["rmse"].append((self._get_prediction_error(training_samples, training_values)))
             training_errors["ticker"].append(element.ticker)
@@ -221,21 +230,34 @@ class FinancePipeline(object):
             testing_samples = scaled_testing_delayvectors[0]
             testing_values = scaled_testing_delayvectors[1]
             print("Testing with {} values.".format(len(testing_samples)))
-            print("Retraining after every {} prediction steps".format(self._prediction_steps))
-            while len(testing_samples) > self._prediction_steps:
-                testing_subset_samples = testing_samples[:self._prediction_steps]
-                testing_subset_values = testing_values[:self._prediction_steps]
-                testing_errors["rmse"].append((self._get_prediction_error(testing_subset_samples, testing_subset_values)))
+            if self._retrain:
+                print("Retraining after every {} prediction steps".format(self._prediction_steps))
+                while len(testing_samples) > self._prediction_steps:
+                    testing_subset_samples = testing_samples[:self._prediction_steps]
+                    testing_subset_values = testing_values[:self._prediction_steps]
+                    testing_errors["rmse"].append((self._get_prediction_error(testing_subset_samples, testing_subset_values)))
+                    testing_errors["ticker"].append(element.ticker)
+                    # retrain with testing samples & values
+                    self.retrain_learner(testing_subset_samples, testing_subset_values)
+                    # remove used values
+                    testing_samples = testing_samples[self._prediction_steps:]
+                    testing_values =  testing_values[self._prediction_steps:]
+            else:
+                testing_errors["rmse"].append(self._get_prediction_error(testing_samples, testing_values))
                 testing_errors["ticker"].append(element.ticker)
-                # retrain with testing samples & values
-                self.retrain_learner(testing_subset_samples, testing_subset_values)
-                # remove used values
-                testing_samples = testing_samples[self._prediction_steps:]
-                testing_values =  testing_values[self._prediction_steps:]
             print("Testing finished.") 
             print("------------------------------------------------------------")  
         CSVParser().write_rmses_to_file(training_errors, folder_name, True)
-        CSVParser().write_rmses_to_file(testing_errors, folder_name, False)   
+        CSVParser().write_rmses_to_file(testing_errors, folder_name, False)
+        print(training_errors["rmse"])
+        error_sum = 0
+        for value in training_errors["rmse"]:
+            error_sum += float(value)
+        print("Mean Training RMSE: {}".format(error_sum/len(training_errors["rmse"])))
+        error_sum = 0
+        for value in testing_errors["rmse"]:
+            error_sum += float(value)
+        print("Mean Testing RMSE: {}".format(error_sum/len(testing_errors["rmse"])))
 
     def _get_prediction_error(self, samples, values):
         prediction_vector = []

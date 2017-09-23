@@ -2,6 +2,8 @@
 from pipeline_manager import PipelineManager
 from pipeline.preprocessing.csv_parser import CSVParser
 from pipeline.data.reference_tests import TimeseriesTest, TestTypes
+from view.visualization import Visualization
+from pipeline.preprocessing.csv_parser import CSVParser
 
 def henon_map_test():
     TimeseriesTest(type=TestTypes.HENON , dimension= 2, level=7, training_length=5000,
@@ -16,3 +18,5 @@ if __name__ == "__main__":
     #henon_map_test()
     #jumpmap_test()
     PipelineManager()    
+    #Visualization().plot_rmse_evolution()
+    #CSVParser().get_mean_rmse()

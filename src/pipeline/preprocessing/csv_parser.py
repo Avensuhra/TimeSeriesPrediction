@@ -1,15 +1,17 @@
 import numpy
 import os
+import sys
 import pandas
+import qdarkstyle
 import csv
 from model.finance_data import RawFinanceData
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QApplication
 
 class CSVParser(object):             
 
     def parse_sp500_tickers(self):
         sp500_tickers = []
-        with open("../sp500.csv") as csvfile:
+        with open("../sp500_50.csv") as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 for element in row:
@@ -21,7 +23,7 @@ class CSVParser(object):
             ticker = ticker.strip()
             for item in data:
                 name = item.ticker[item.ticker.find("/")+1:].split()[0]
-                if name == ticker:   
+                if name == ticker:  
                     sp500_data.append(item)
         return sp500_data
 
@@ -80,7 +82,10 @@ class CSVParser(object):
         if not os.path.exists(path):
             os.mkdir(path)
 
-    def read_rmse_file(self, file):
+    def get_mean_rmse(self):
+        app = QApplication(sys.argv)
+        app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
         dialog = QFileDialog()
+        dialog.exec_()
         file = dialog.selectedFiles()[0]
-        return pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))
+        print file, pandas.DataFrame.from_csv(file)['rmse'].mean()

@@ -9,10 +9,10 @@ def henon_map_test():
 
 def jumpmap_test():
     TimeseriesTest(type=TestTypes.JUMP_MAP, dimension=5, level=5, training_length=5000,
-                   lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13))
+                   lambda_parameter=pow(10, -4), training_accuracy=pow(10, -13), with_adaptivity=True)
 
 
 if __name__ == "__main__":
-    henon_map_test()
+    #henon_map_test()
     #jumpmap_test()
-    #PipelineManager()    
+    PipelineManager()    

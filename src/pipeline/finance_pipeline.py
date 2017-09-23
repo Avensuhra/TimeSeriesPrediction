@@ -193,13 +193,6 @@ class FinancePipeline(object):
                 CSVParser().write_datasets_to_csv(tmp_name, element.datasets)
             # Always use adjusted close for now
             dataset = element.datasets.get(u'Adj. Close')
-            # Split dataset into training and test set according to selected dates
-            training_set = dataset[str(self._startdate_train):str(self._enddate_train)]
-            testing_set = dataset[str(self._startdate_test):str(self._enddate_test)]
-            print len(training_set), len(testing_set)
-            if len(training_set) == 0 or len(testing_set) == 0:
-                print("Not enough data to test this company.")
-                continue;
             # Check for embedding dimension
             if element.embedding_dimension == 0:
                 element.embedding_dimension = self._calculate_embedding_dimension(dataset)
@@ -208,6 +201,13 @@ class FinancePipeline(object):
             # Taken's delay embedding theorem
             self._dimension = 2*element.embedding_dimension + 1
             print("Converting data into dimensional construct.")
+            # Split dataset into training and test set according to selected dates
+            training_set = dataset[str(self._startdate_train):str(self._enddate_train)]
+            testing_set = dataset[str(self._startdate_test):str(self._enddate_test)]
+            print len(training_set), len(testing_set)
+            if len(training_set) <= self._dimension or len(testing_set) <= self._dimension:
+                print("Not enough data to test this company.")
+                continue;
             scaled_training_delayvectors = self._prepare_single_dataset(training_set)
             scaled_testing_delayvectors = self._prepare_single_dataset(testing_set)
             # Build learner
@@ -262,7 +262,7 @@ class FinancePipeline(object):
         self._learner = TimeseriesLearner()
         self._learner.set_training_data(training_samples, training_values)
         self._learner.set_grid(self._grid_level)
-        self._learner.set_specification(self._regression_parameter, self._adaptivity)
+        self._learner.set_specification(self._regression_parameter, self._adaptivity, self._adapt_rate, self._adapt_threshold)
         self._learner.set_stop_policy()
         self._learner.set_solver(SolverTypes.CG, self._training_accuracy)
         self._learner.get_result()

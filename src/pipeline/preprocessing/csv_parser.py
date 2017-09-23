@@ -3,6 +3,7 @@ import os
 import pandas
 import csv
 from model.finance_data import RawFinanceData
+from PyQt5.QtWidgets import QFileDialog
 
 class CSVParser(object):             
 
@@ -78,3 +79,8 @@ class CSVParser(object):
     def _check_dir(self, path):
         if not os.path.exists(path):
             os.mkdir(path)
+
+    def read_rmse_file(self, file):
+        dialog = QFileDialog()
+        file = dialog.selectedFiles()[0]
+        return pandas.DataFrame.from_csv("../quandl_data/{}.csv".format(ticker))

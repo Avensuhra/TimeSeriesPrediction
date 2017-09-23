@@ -19,9 +19,9 @@ class TimeseriesLearner(object):
     def set_grid(self, level):
         self._builder = self._builder.withGrid().withLevel(level).withBorder(Types.BorderTypes.NONE)
 
-    def set_specification(self, lambda_parameter, with_adaptivity):
+    def set_specification(self, lambda_parameter, with_adaptivity, rate, threshold):
         if(with_adaptivity):
-            self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptPoints(10)
+            self._builder = self._builder.withSpecification().withLambda(lambda_parameter).withAdaptRate(rate).withAdaptThreshold(threshold)
         else:
             self._builder = self._builder.withSpecification().withLambda(lambda_parameter)
 
@@ -29,14 +29,14 @@ class TimeseriesLearner(object):
         self._builder.withRandomFoldingPolicy().withLevel(3)
 
     def set_stop_policy(self):
-        self._builder = self._builder.withStopPolicy()#.withAdaptiveItarationLimit(20)
+        self._builder = self._builder.withStopPolicy().withAdaptiveItarationLimit(5)
 
     def set_solver(self, type, accuracy):
         if type == SolverTypes.CG:
             self._builder = self._builder.withCGSolver().withAccuracy(accuracy).withImax(400)
 
-    def get_result(self):
-        self._learner = self._builder.andGetResult() #.withProgressPresenter(InfoToScreen())
+    def get_result(self):   
+        self._learner = self._builder.andGetResult()#.withProgressPresenter(InfoToScreen())
         gs = self._learner.grid.getStorage()
         alpha = DataVector(gs.getSize(), 0.0)
         self._learner.errors = alpha

@@ -29,7 +29,7 @@ class TimeSeriesPipeline(object):
         self._learner = TimeseriesLearner()
         self._learner.set_training_data(scaled_samples, scaled_values)
         self._learner.set_grid(level)
-        self._learner.set_specification(lambda_parameter, with_adaptivity)
+        self._learner.set_specification(lambda_parameter, with_adaptivity, rate=0.1, threshold=0.1)
         self._learner.set_stop_policy()
         self._learner.set_solver(SolverTypes.CG, self._accuracy)
         self._learner.get_result()

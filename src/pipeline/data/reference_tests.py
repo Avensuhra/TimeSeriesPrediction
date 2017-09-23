@@ -33,7 +33,7 @@ class TimeseriesTest(object):
     _with_adaptivity = None
 
     def __init__(self, type, dimension, level, training_length, lambda_parameter, training_accuracy, quandl_query = "",
-                 with_adaptivity=True, testing_length=0):
+                 with_adaptivity=False, testing_length=0):
         print("General Parameters: ")
         print("Lambda: " + str(lambda_parameter))
         print("Grid level: " + str(level))

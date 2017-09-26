@@ -223,6 +223,7 @@ class FinancePipeline(object):
                 return
             else:
                 print("Setup complete. Starting training.")
+            print("Training with {} values.".format(len(training_samples)))
             self._build_learner(training_samples, training_values)
             training_errors["rmse"].append((self._get_prediction_error(training_samples, training_values)))
             training_errors["ticker"].append(element.ticker)
@@ -249,7 +250,6 @@ class FinancePipeline(object):
             print("------------------------------------------------------------")  
         CSVParser().write_rmses_to_file(training_errors, folder_name, True)
         CSVParser().write_rmses_to_file(testing_errors, folder_name, False)
-        print(training_errors["rmse"])
         error_sum = 0
         for value in training_errors["rmse"]:
             error_sum += float(value)
